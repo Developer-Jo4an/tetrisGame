@@ -1,0 +1,37 @@
+[
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "test",
+    "path": "assets/texture/",
+    "fileName": "test.jpg"
+  },
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "cell-standard",
+    "path": "assets/texture/",
+    "fileName": "cell-standard.png"
+  },
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "cell-empty",
+    "path": "assets/texture/",
+    "fileName": "cell-empty.png"
+  },
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "cell-dontExist",
+    "path": "assets/texture/",
+    "fileName": "cell-dontExist.png"
+  },
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "square",
+    "path": "assets/texture/",
+    "fileName": "square.jpg"
+  }
+]
