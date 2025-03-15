@@ -1,7 +1,10 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
+import {CSSTransition} from "react-transition-group";
 
 export const Stats = ({eventBus}) => {
   const [stats, setStats] = useState([]);
+
+  const formattedStates = useMemo(() => Object.entries(stats ?? {}), [stats]);
 
   useEffect(() => {
     if (!eventBus) return;
@@ -28,10 +31,19 @@ export const Stats = ({eventBus}) => {
   }, [eventBus]);
 
   return (
-    <div className={"stats"}>
-      <div className={"stats__list"}>
-        {Object.entries(stats).map(([key, value]) => <div key={key} className={"stats__item"}>{key}:{value}</div>)}
+    <CSSTransition
+      in={!!formattedStates.length}
+      timeout={300}
+      appear={true}
+      mountOnEnter={true}
+      unmountOnExit={true}
+      classNames={"stats"}
+    >
+      <div className={"stats"}>
+        <div className={"stats__list"}>
+          {formattedStates.map(([key, value]) => <div key={key} className={"stats__item"}>{key}:{value}</div>)}
+        </div>
       </div>
-    </div>
+    </CSSTransition>
   );
 };

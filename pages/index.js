@@ -1,14 +1,14 @@
 import React from 'react';
 import PageDescription from "../components/baseComponents/head/pageDescription/PageDescription";
 import defaultPage from "../constants/page-description";
-import Scene from "../components/threeComponent/Scene";
+import TetrisComponent from "../components/tetrisComponent/TetrisComponent";
 
 export default function Home() {
 
   return (
     <div className="container">
       <PageDescription {...defaultPage}/>
-      <Scene/>
+      <TetrisComponent/>
     </div>
   );
 }

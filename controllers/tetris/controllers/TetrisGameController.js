@@ -32,21 +32,20 @@ export default class TetrisGameController extends BaseTetrisController {
 
     this.eventBus.dispatchEvent({type: "timeout:update", remainder: timeout});
 
-    const self = this;
-
     let currentTime = timeout;
 
     this.timeoutTween = gsap.to({}, {
       duration: timeout,
-      onUpdate: function () {
-        const progress = this.progress();
+      onUpdate: () => {
+        const progress = this.timeoutTween.progress();
         const remainder = Math.ceil(timeout - progress * timeout);
         if (currentTime !== remainder) {
           currentTime = remainder;
-          self.eventBus.dispatchEvent({type: "timeout:update", remainder});
+          this.eventBus.dispatchEvent({type: "timeout:update", remainder});
         }
       },
       onComplete: () => {
+        this.timeoutTween.kill();
         this.lose();
       }
     });

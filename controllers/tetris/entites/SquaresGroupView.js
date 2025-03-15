@@ -142,7 +142,10 @@ export default class SquaresGroupView extends BaseEntity {
         y: this.startPosition.y,
         duration: 0.2,
         ease: "sine.inOut",
-        onComplete: res
+        onComplete: function () {
+          this.kill();
+          res();
+        }
       }));
 
     Promise.all([scaleTweenPromise, positionTweenPromise]).then(this.clearDraggingData.bind(this));
@@ -151,20 +154,23 @@ export default class SquaresGroupView extends BaseEntity {
   setActive(isActive) {
     const timeline = gsap.timeline();
 
-    timeline
-    .to(this.view.scale, {
+    timeline.to(this.view.scale, {
       x: isActive ? 1 : this.selectionScale,
       y: isActive ? 1 : this.selectionScale,
       duration: 0.1,
       ease: "sine.inOut"
-    })
-    .to(this.hitArea, {
+    }).to(this.hitArea, {
       alpha: +!isActive,
       duration: 0.1,
       ease: "sine.inOut"
     }, 0);
 
-    return new Promise(res => timeline.eventCallback("onComplete", res));
+    const onComplete = res => {
+      timeline.kill();
+      res();
+    };
+
+    return new Promise(res => timeline.eventCallback("onComplete", () => onComplete(res)));
   }
 
   setPossibleStepModeToCell(possibleCells) {

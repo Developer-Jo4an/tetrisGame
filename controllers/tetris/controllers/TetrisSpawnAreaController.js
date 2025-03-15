@@ -64,22 +64,33 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     }, []);
   }
 
-  generateSquaresGroupArray() {
-    const {spawnArea: {spawnSettings: {ranges, directions}}} = this.storage.mainSceneSettings;
-
+  getPercentSquareCount() {
     const cells = TetrisFactory.getCollectionByType("cell");
     const squares = TetrisFactory.getCollectionByType("square");
-
     //todo: в константы разброс
-    const percentSquareCount = Math.ceil((cells.length - squares.length) * getRandomFromRange(0.25, 0.4));
+    return Math.ceil((cells.length - squares.length) * getRandomFromRange(0.25, 0.4));
+  }
 
-    const shapesCounts = shuffle(ranges.reduce((acc, [minCount, squareCount]) =>
-        percentSquareCount >= minCount ? [...acc, squareCount] : acc
-      , [1]));
+  getShapesCountVariants(percentSquareCount) {
+    const {spawnArea: {spawnSettings: {ranges}}} = this.storage.mainSceneSettings;
 
-    const totalShapes = [];
+    return ranges.reduce((acc, [minCount, squareCount]) =>
+        percentSquareCount >= minCount ? [squareCount, ...acc] : acc
+      , [1]);
+  }
+
+  generateSquaresGroupArray() {
+    const {spawnArea: {spawnSettings: {directions}}} = this.storage.mainSceneSettings;
+
+    const cells = TetrisFactory.getCollectionByType("cell");
+
+    const percentSquareCount = this.getPercentSquareCount();
+
+    const shapesCounts = this.getShapesCountVariants(percentSquareCount);
 
     const grid = this.cellsToGrid();
+
+    const totalShapes = [];
 
     shapesCounts.forEach(count => {
       if (totalShapes.length) return;
@@ -115,8 +126,6 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
           shuffledCells.forEach(cell => {
             if (!this.isCellEmpty(cell) || isPossibleShape) return;
 
-            const cellPosition = cell.getPosById();
-
             const recurse = ({row, column}) => {
               if (checkOnComplete()) return;
 
@@ -124,8 +133,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
               const cellId = `${row}-${column}`;
 
-              if (!allFigures.includes(cellId))
+              if (!allFigures.includes(cellId)) {
                 shapeArr.push(cellId);
+                if (checkOnComplete()) return;
+              } else return;
 
               const shuffledDirections = shuffle([...directions]);
 
@@ -139,7 +150,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
               });
             };
 
-            recurse(cellPosition);
+            recurse(cell.getPosById());
 
             const cellResult = checkOnComplete();
 
@@ -148,6 +159,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
           if (!isPossibleShape) isNecessaryFigure = false;
         });
+
+        console.log(reservedShapes);
+
+        console.log("dwqdqwdwfwfwfwfwf");
 
         if (isNecessaryFigure) {
           totalShapes.push(...reservedShapes);
@@ -159,12 +174,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
         this.generateSquaresGroupArray();
     });
 
-    this.generateSquaresGroupView(totalShapes);
+    this.createShapesGroupView(totalShapes);
   }
 
-  generateSquaresGroupView(shapes) {
-    const {spawnArea: {distanceBetweenArea}, area: {margin}} = this.storage.mainSceneSettings;
-
+  createShapesGroupView(shapes) {
     shapes.forEach((shape, index) => {
       const id = `${this.step}:${index}`;
       const squaresGroupData = {
@@ -173,11 +186,22 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       TetrisFactory.createItem("squaresGroupView", squaresGroupData);
     });
 
+    this.exposeSquaresGroupView();
+  }
+
+  exposeSquaresGroupView() {
+    const {spawnArea: {distanceBetweenArea}, area: {margin}} = this.storage.mainSceneSettings;
+
     const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
     const spawnGroupArea = TetrisFactory.getItemById("spawnArea", "spawnArea");
     const shapeGroups = TetrisFactory.getCollectionByType("squaresGroupView");
 
-    const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea;
+    shapeGroups.forEach(({startShapes}) => console.log(startShapes));
+    console.log("-------------------------");
+    shapeGroups.forEach(({normalizedPositions}) => console.log(normalizedPositions));
+    console.log("////////////////////////////////////////////////////////////////");
+
+    const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea - margin;
     const maxWidth = GAME_SIZE.width - (margin * 2) - ((shapeGroups.length - 1) * margin);
 
     const {widthValue, heightValue} = shapeGroups.reduce((acc, {view}) => {
@@ -186,11 +210,11 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       return {widthValue: widthValue + width, heightValue: Math.max(heightValue, height)};
     }, {widthValue: 0, heightValue: 0});
 
-    const scale = Math.min(maxWidth / widthValue, maxHeight / heightValue);
+    const shapeScale = Math.min(maxWidth / widthValue, maxHeight / heightValue);
 
     shapeGroups.forEach((shapeGroup, index, arr) => {
       const {view} = shapeGroup;
-      shapeGroup.setSelectionScale(scale);
+      shapeGroup.setSelectionScale(shapeScale);
       const prevEls = arr.slice(0, index);
       const x = prevEls.reduce((acc, {view}) => acc + view.width + margin, view.width / 2);
       const y = view.height / 2;
@@ -210,11 +234,12 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
     const shapeViews = shapeGroups.map(({view}) => view);
 
-    gsap.to(shapeViews, {
+    const tween = gsap.to(shapeViews, {
       alpha: 1,
       duration: 0.3,
       ease: "sine.out",
       onComplete: () => {
+        tween.kill();
         shapeGroups.forEach(shapeGroup => shapeGroup.setInteractive(true));
       }
     });
@@ -235,9 +260,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     const isLose = shapeGroups?.length && this.checkLose();
 
     if (isLose) {
-      gsap.to({}, {
+      const tween = gsap.to({}, {
         duration: 1,
         onComplete: () => {
+          tween.kill();
           this.eventBus.dispatchEvent({type: "game:lose"});
         }
       });
@@ -274,6 +300,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     });
 
     const onEndHideAnimation = res => {
+      tween.kill();
       squares.forEach(square => square.destroy());
       this.eventBus.dispatchEvent({type: "currentPoints:add", addCount: squares?.length});
       res();

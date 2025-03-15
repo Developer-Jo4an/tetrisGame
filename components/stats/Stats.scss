@@ -7,6 +7,29 @@
 
   background-color: rgba(#000000, 0.7);
 
+  pointer-events: none;
+  user-select: none;
+
+  opacity: 0;
+
+  &-enter-active {
+    opacity: 1;
+    transition: .3s opacity ease-in-out;
+  }
+
+  &-enter-done {
+    opacity: 1;
+  }
+
+  &-exit {
+    opacity: 1;
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transition: .3s opacity ease-in-out;
+  }
+
   &__list {
     display: flex;
     flex-direction: column;
