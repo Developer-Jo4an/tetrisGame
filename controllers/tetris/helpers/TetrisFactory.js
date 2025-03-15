@@ -21,7 +21,7 @@ export default class TetrisFactory {
 
         const status = ({"false": "dontExist", "empty": "empty", "true": "standard"})[cellType];
         const name = `cell:${id}`;
-        const size = globalUtils.getCellSize({gameSize: GAME_SIZE, grid, margin: area.margin});
+        const size = globalUtils.getCellSize({gameSize: GAME_SIZE, grid, margin: area.marginSide});
 
         const cellCreateData = {
           id, level, status, size, storage, stage, eventBus, name
@@ -41,7 +41,7 @@ export default class TetrisFactory {
 
         const name = `square:${id}`;
 
-        const size = globalUtils.getCellSize({gameSize: GAME_SIZE, grid, margin: area.margin});
+        const size = globalUtils.getCellSize({gameSize: GAME_SIZE, grid, margin: area.marginSide});
 
         const squareCreateData = {
           id, name, level, storage, stage, eventBus, size

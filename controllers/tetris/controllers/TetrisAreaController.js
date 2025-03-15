@@ -114,7 +114,10 @@ export default class TetrisAreaController extends BaseTetrisController {
 
     const {view: gridView} = gridArea;
 
-    gridView.position.x = (GAME_SIZE.width - gridView.width) / 2;
+    gridView.position.set(
+      (GAME_SIZE.width - gridView.width) / 2,
+      area.marginTop
+    )
 
     TetrisFactory.getCollectionByType("cell").forEach(cell => cell.view.scale.set(0));
 

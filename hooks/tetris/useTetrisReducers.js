@@ -1,4 +1,4 @@
-import {useModal} from "./useModal";
+import {useModal} from "../useModal";
 
 export const useTetrisReducers = props => {
   const {resetGame} = props;

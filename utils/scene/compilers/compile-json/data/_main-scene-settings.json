@@ -1,6 +1,8 @@
 {
   "area": {
-    "margin": 35
+    "marginTop": 80,
+    "marginSide": 35,
+    "marginBottom": 80
   },
   "spawnArea": {
     "distanceBetweenArea": 50,
@@ -31,9 +33,7 @@
       "startHideCellsMultiplier": 0.45,
       "percentSpawnSquares": [0.25, 0.6],
       "grid": [
-        {
-          "cells": [false, false, false, false, false, false, false, false]
-        }, {
+         {
           "cells": [false, true, false, false, false, false, true, false]
         }, {
           "cells": [true, true, true, false, false, true, true, true]

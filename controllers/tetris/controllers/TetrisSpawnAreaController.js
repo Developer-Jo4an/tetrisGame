@@ -75,9 +75,9 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
   getShapesCountVariants(squaresCount) {
     const {spawnArea: {spawnSettings: {ranges}}} = this.storage.mainSceneSettings;
 
-    return ranges.reduce((acc, [minCount, squareCount]) =>
+    return shuffle([...ranges.reduce((acc, [minCount, squareCount]) =>
         squaresCount >= minCount ? [squareCount, ...acc] : acc
-      , [1]);
+      , [1])]);
   }
 
   generateSquaresGroupArray() {
@@ -187,14 +187,14 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
   }
 
   exposeSquaresGroupView() {
-    const {spawnArea: {distanceBetweenArea}, area: {margin}} = this.storage.mainSceneSettings;
+    const {spawnArea: {distanceBetweenArea}, area: {marginSide, marginTop, marginBottom}} = this.storage.mainSceneSettings;
 
     const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
     const spawnGroupArea = TetrisFactory.getItemById("spawnArea", "spawnArea");
     const shapeGroups = TetrisFactory.getCollectionByType("squaresGroupView");
 
-    const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea - margin;
-    const maxWidth = GAME_SIZE.width - (margin * 2) - ((shapeGroups.length - 1) * margin);
+    const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea - marginTop - marginBottom;
+    const maxWidth = GAME_SIZE.width - (marginSide * 2) - ((shapeGroups.length - 1) * marginSide);
 
     const {widthValue, heightValue} = shapeGroups.reduce((acc, {view}) => {
       const {height, width} = view;
@@ -208,7 +208,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       const {view} = shapeGroup;
       shapeGroup.setSelectionScale(shapeScale);
       const prevEls = arr.slice(0, index);
-      const x = prevEls.reduce((acc, {view}) => acc + view.width + margin, view.width / 2);
+      const x = prevEls.reduce((acc, {view}) => acc + view.width + marginSide, view.width / 2);
       const y = view.height / 2;
       view.position.set(x, y);
       spawnGroupArea.addShape(view);
@@ -220,7 +220,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     shapeGroups.forEach(({view}) => view.position.y = spawnGroupView.height / 2);
 
     spawnGroupView.pivot.set(spawnGroupView.width / 2, 0);
-    spawnGroupView.position.set(GAME_SIZE.width / 2, gridArea.view.height + distanceBetweenArea);
+    spawnGroupView.position.set(GAME_SIZE.width / 2, gridArea.view.height + distanceBetweenArea + marginTop);
 
     this.stage.addChild(spawnGroupView);
 

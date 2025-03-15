@@ -4,7 +4,8 @@ import {basePixiImports} from "../../utils/scene/utils/import/import-pixi";
 import useStateReducer from "../../utils/scene/react/hooks/useStateReducer";
 import Loader from "../loader/Loader";
 import {Stats} from "../stats/Stats";
-import {useTetrisReducers} from "../../hooks/useTetrisReducers";
+import {useTetrisReducers} from "../../hooks/tetris/useTetrisReducers";
+import {useReactionsOnEventBusActions} from "../../hooks/tetris/useReactionsOnEventBusActions";
 
 const stateMachine = {
   loadManifest: {availableStates: ["loading"], nextState: "loading", isDefault: true, isLoading: true},
@@ -57,26 +58,7 @@ const TetrisComponents = () => {
     }
   });
 
-  useEffect(() => {
-    if (!wrapper) return;
-
-    const {eventBus} = wrapper;
-
-    const callbacks = {
-      "state:next": nextStateCallback,
-      "state:change": setStateCallback,
-      "game:lost": () => setStateCallback("lose"),
-      "game:won": () => setStateCallback("win")
-    };
-
-    const listenerLogic = method => {
-      for (const key in callbacks)
-        eventBus[`${method}EventListener`](key, callbacks[key]);
-    };
-
-    listenerLogic("add");
-    return () => listenerLogic("remove");
-  }, [wrapper, state]);
+  useReactionsOnEventBusActions({wrapper, state, nextStateCallback, setStateCallback})
 
   const isLoading = useMemo(() => stateMachine[state].isLoading, [state]);
 
