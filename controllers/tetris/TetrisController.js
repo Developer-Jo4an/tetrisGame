@@ -3,7 +3,7 @@ import TetrisAreaController from "./controllers/TetrisAreaController";
 import TetrisSpawnAreaController from "./controllers/TetrisSpawnAreaController";
 import TetrisGameController from "./controllers/TetrisGameController";
 
-export const GAME_SIZE = {width: 700, height: 1100};
+export const GAME_SIZE = {width: 720, height: 1280};
 
 export default class TetrisController extends PixiController {
 
@@ -29,8 +29,13 @@ export default class TetrisController extends PixiController {
     return !this.isLoaded && super.loadingSelect().then(() => this.isLoaded = true);
   }
 
+  initializationControllersSelect() {
+    const {eventBus, renderer, canvas, stage, storage, state, level} = this;
+    const controllerData = {eventBus, renderer, canvas, stage, storage, state, level};
+    this.controllers = TetrisController.CONTROLLERS.map(ControllerCls => new ControllerCls(controllerData));
+  }
+
   initializationSelect() {
-    this.initControllers();
     this.app.ticker.add(this.update);
     this.setPause(false);
   }
@@ -54,13 +59,6 @@ export default class TetrisController extends PixiController {
   setPause(isPause) {
     gsap.globalTimeline[isPause ? "pause" : "play"]();
     this.app.ticker[isPause ? "stop" : "start"]();
-  }
-
-  initControllers() {
-    if (this.controllers.length) return; //todo: не оч красивая проверка и понятная
-    const {eventBus, renderer, canvas, stage, storage, state, level} = this;
-    const controllerData = {eventBus, renderer, canvas, stage, storage, state, level};
-    this.controllers = TetrisController.CONTROLLERS.map(ControllerCls => new ControllerCls(controllerData));
   }
 
   setLevel(level) {

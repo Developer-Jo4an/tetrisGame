@@ -12,14 +12,13 @@ export default class TetrisFactory {
   static reusedLibrary = {};
 
   //create
-  static createItem(type, data = {}, extraProps = {}) {
-    //extraProps в случае, если данные могут быть НЕ одинаковыми при периспользовании и требуется динамический расчет
+  static createItem(type, data = {}) {
     const createLogic = {
       cell: () => {
         const {row, column, level, grid, area, cell: cellType, storage, stage, eventBus} = data;
 
         const id = `${row}-${column}`;
-        // cell: true | false | "empty": true - непустая, false - отсутствие, empty - пустая
+
         const status = ({"false": "dontExist", "empty": "empty", "true": "standard"})[cellType];
         const name = `cell:${id}`;
         const size = globalUtils.getCellSize({gameSize: GAME_SIZE, grid, margin: area.margin});

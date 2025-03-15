@@ -136,6 +136,7 @@ export default class Cell extends BaseEntity {
   }
 
   setMode(mode) {
+    const {cell: {mods: {standard, possibleStep}}} = this.storage.mainSceneSettings
     if (this.isDisabledCell)
       throw new Error("incorrect status");
 
@@ -143,10 +144,10 @@ export default class Cell extends BaseEntity {
 
     ({
       standard: () => {
-        this.cellSprite.tint = 0xffffff;
+        this.cellSprite.tint = standard.color;
       },
       possibleStep: () => {
-        this.cellSprite.tint = 0xff0000; //todo: в константы цвет на данный mode
+        this.cellSprite.tint = possibleStep.color;
       }
     })[mode]();
   }

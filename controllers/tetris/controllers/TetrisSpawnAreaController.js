@@ -64,18 +64,19 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     }, []);
   }
 
-  getPercentSquareCount() {
+  getSquaresCount() {
+    const {level, storage: {mainSceneSettings: {levels}}} = this;
+    const {percentSpawnSquares} = levels[level.value];
     const cells = TetrisFactory.getCollectionByType("cell");
-    const squares = TetrisFactory.getCollectionByType("square");
-    //todo: в константы разброс
-    return Math.ceil((cells.length - squares.length) * getRandomFromRange(0.25, 0.4));
+    const cellsCount = cells.filter(cell => this.isCellEmpty(cell));
+    return Math.ceil(cellsCount.length * getRandomFromRange(...percentSpawnSquares));
   }
 
-  getShapesCountVariants(percentSquareCount) {
+  getShapesCountVariants(squaresCount) {
     const {spawnArea: {spawnSettings: {ranges}}} = this.storage.mainSceneSettings;
 
     return ranges.reduce((acc, [minCount, squareCount]) =>
-        percentSquareCount >= minCount ? [squareCount, ...acc] : acc
+        squaresCount >= minCount ? [squareCount, ...acc] : acc
       , [1]);
   }
 
@@ -84,9 +85,9 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
     const cells = TetrisFactory.getCollectionByType("cell");
 
-    const percentSquareCount = this.getPercentSquareCount();
+    const squaresCount = this.getSquaresCount();
 
-    const shapesCounts = this.getShapesCountVariants(percentSquareCount);
+    const shapesCounts = this.getShapesCountVariants(squaresCount);
 
     const grid = this.cellsToGrid();
 
@@ -95,7 +96,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     shapesCounts.forEach(count => {
       if (totalShapes.length) return;
 
-      const allShapeCombinations = globalUtils.generateNumberPairs(percentSquareCount, count);
+      const allShapeCombinations = globalUtils.generateNumberPairs(squaresCount, count);
 
       let isPossibleCombination = false;
 
@@ -283,7 +284,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
     const shuffledSquaresViews = shuffle(squares.map(({view}) => view));
 
-    const tween = gsap.to(shuffledSquaresViews, { //todo: в константы delay
+    const tween = gsap.to(shuffledSquaresViews, {
       alpha: 0,
       delay: i => 0.3 + (i * 0.05),
       duration: 0.3,

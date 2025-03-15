@@ -18,6 +18,8 @@ const copyright = {
   }
 };
 
+const {buttons, dataByStatus} = copyright;
+
 export const GameEndModal = ({id, status, actions}) => {
   const {closeModal} = useModal();
 
@@ -28,14 +30,14 @@ export const GameEndModal = ({id, status, actions}) => {
     }
   };
 
-  const {title} = copyright.dataByStatus[status];
+  const {title} = dataByStatus[status];
 
   return (
     <div className={"game-end-modal"}>
       <div className={"game-end-modal__content"}>
         <div className={"game-end-modal__title"}>{title}</div>
         <div className={"game-end-modal__buttons"}>
-          {copyright.buttons.map(({attr: {text}, action}) => {
+          {buttons.map(({attr: {text}, action}) => {
             return <CustomButton
               key={`game-modal-button:${action}`}
               className={"game-end-modal__button"}

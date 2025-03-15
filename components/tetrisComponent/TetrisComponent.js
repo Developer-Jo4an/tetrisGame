@@ -8,7 +8,8 @@ import {useTetrisReducers} from "../../hooks/useTetrisReducers";
 
 const stateMachine = {
   loadManifest: {availableStates: ["loading"], nextState: "loading", isDefault: true, isLoading: true},
-  loading: {availableStates: ["initialization"], nextState: "initialization", isLoading: true},
+  loading: {availableStates: ["initializationControllers"], nextState: "initializationControllers", isLoading: true},
+  initializationControllers: {availableStates: ["initialization"], nextState: "initialization", isLoading: true},
   initialization: {availableStates: ["showing"], nextState: "showing", isLoading: true},
   showing: {availableStates: ["playing"], nextState: "playing"},
   playing: {availableStates: ["pause", "win", "lose"]},

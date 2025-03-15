@@ -10,6 +10,14 @@
     }
   },
   "cell": {
+    "mods": {
+      "standard": {
+        "color": "0xffffff"
+      },
+      "possibleStep": {
+        "color": "0xff0000"
+      }
+    }
   },
   "square": {
     "colors": ["0xFF0000", "0xFF7F00", "0xFFFF00", "0x00FF00", "0x0000FF", "0x4B0082", "0x8B00FF"]
@@ -21,6 +29,7 @@
         "timeout": 200
       },
       "startHideCellsMultiplier": 0.45,
+      "percentSpawnSquares": [0.25, 0.6],
       "grid": [
         {
           "cells": [false, false, false, false, false, false, false, false]
@@ -29,9 +38,9 @@
         }, {
           "cells": [true, true, true, false, false, true, true, true]
         }, {
-          "cells": [true, true, true, true, true, true, true, true]
+          "cells": [true, true, true, "empty", "empty", true, true, true]
         }, {
-          "cells": [true, true, true, true, true, true, true, true]
+          "cells": [true, true, true, "empty", "empty", true, true, true]
         }, {
           "cells": [false, true, true, true, true, true, true, false]
         }, {
