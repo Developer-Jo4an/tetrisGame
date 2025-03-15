@@ -160,10 +160,6 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
           if (!isPossibleShape) isNecessaryFigure = false;
         });
 
-        console.log(reservedShapes);
-
-        console.log("dwqdqwdwfwfwfwfwf");
-
         if (isNecessaryFigure) {
           totalShapes.push(...reservedShapes);
           isPossibleCombination = true;
@@ -195,11 +191,6 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
     const spawnGroupArea = TetrisFactory.getItemById("spawnArea", "spawnArea");
     const shapeGroups = TetrisFactory.getCollectionByType("squaresGroupView");
-
-    shapeGroups.forEach(({startShapes}) => console.log(startShapes));
-    console.log("-------------------------");
-    shapeGroups.forEach(({normalizedPositions}) => console.log(normalizedPositions));
-    console.log("////////////////////////////////////////////////////////////////");
 
     const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea - margin;
     const maxWidth = GAME_SIZE.width - (margin * 2) - ((shapeGroups.length - 1) * margin);
