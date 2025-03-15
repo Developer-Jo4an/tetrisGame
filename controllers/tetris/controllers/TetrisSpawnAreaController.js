@@ -3,36 +3,7 @@ import TetrisFactory from "../helpers/TetrisFactory";
 import {getRandomFromRange} from "../../../utils/data/random/getRandomFromRange";
 import {GAME_SIZE} from "../TetrisController";
 import {shuffle} from "../../../utils/scene/utils/random/shuffle";
-
-const utils = {
-  generateNumberPairs: (count, partials) => {
-    const result = [];
-
-    const backtrack = (current, remaining, count) => {
-      if (count === partials) {
-        !remaining && result.push([...current]);
-        return;
-      }
-
-      const start = current.length ? current[current.length - 1] : 1;
-
-      for (let i = start; i <= remaining; i++) {
-        current.push(i);
-        backtrack(current, remaining - i, count + 1);
-        current.pop();
-      }
-    };
-
-    backtrack([], count, 0);
-
-    return result;
-  }
-};
-
-const constants = {
-  directions: [[0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [-1, -1], [1, -1], [-1, 1]],
-  ranges: [[4, 2], [8, 3], [12, 4]]
-};
+import {globalUtils} from "../utils/globalUtils";
 
 export default class TetrisSpawnAreaController extends BaseTetrisController {
   constructor(data) {
@@ -94,13 +65,15 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
   }
 
   generateSquaresGroupArray() {
+    const {spawnArea: {spawnSettings: {ranges, directions}}} = this.storage.mainSceneSettings;
+
     const cells = TetrisFactory.getCollectionByType("cell");
     const squares = TetrisFactory.getCollectionByType("square");
 
     //todo: в константы разброс
     const percentSquareCount = Math.ceil((cells.length - squares.length) * getRandomFromRange(0.25, 0.4));
 
-    const shapesCounts = shuffle(constants.ranges.reduce((acc, [minCount, squareCount]) =>
+    const shapesCounts = shuffle(ranges.reduce((acc, [minCount, squareCount]) =>
         percentSquareCount >= minCount ? [...acc, squareCount] : acc
       , [1]));
 
@@ -111,7 +84,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     shapesCounts.forEach(count => {
       if (totalShapes.length) return;
 
-      const allShapeCombinations = utils.generateNumberPairs(percentSquareCount, count);
+      const allShapeCombinations = globalUtils.generateNumberPairs(percentSquareCount, count);
 
       let isPossibleCombination = false;
 
@@ -154,7 +127,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
               if (!allFigures.includes(cellId))
                 shapeArr.push(cellId);
 
-              const shuffledDirections = shuffle([...constants.directions]);
+              const shuffledDirections = shuffle([...directions]);
 
               shuffledDirections.forEach(([y, x]) => {
                 if (checkOnComplete()) return;
@@ -204,21 +177,20 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     const spawnGroupArea = TetrisFactory.getItemById("spawnArea", "spawnArea");
     const shapeGroups = TetrisFactory.getCollectionByType("squaresGroupView");
 
-    const gridAreaHeight = gridArea.view.height;
-    const maxHeight = GAME_SIZE.height - gridAreaHeight - distanceBetweenArea;
-    const maxWidth = GAME_SIZE.width - margin * 2;
+    const maxHeight = GAME_SIZE.height - gridArea.view.height - distanceBetweenArea;
+    const maxWidth = GAME_SIZE.width - (margin * 2) - ((shapeGroups.length - 1) * margin);
 
-    const minScale = shapeGroups.reduce((acc, shapeGroup, _, arr) => {
-      const {view} = shapeGroup;
-      const scaleHeight = maxHeight / view.height;
-      const scaleWidth = ((maxWidth / arr.length) - ((arr.length - 1) * (margin))) / view.width;
-      const scale = Math.min(scaleHeight, scaleWidth);
-      return Math.min(scale, acc);
-    }, Number.MAX_VALUE);
+    const {widthValue, heightValue} = shapeGroups.reduce((acc, {view}) => {
+      const {height, width} = view;
+      const {widthValue, heightValue} = acc;
+      return {widthValue: widthValue + width, heightValue: Math.max(heightValue, height)};
+    }, {widthValue: 0, heightValue: 0});
+
+    const scale = Math.min(maxWidth / widthValue, maxHeight / heightValue);
 
     shapeGroups.forEach((shapeGroup, index, arr) => {
       const {view} = shapeGroup;
-      shapeGroup.setSelectionScale(minScale);
+      shapeGroup.setSelectionScale(scale);
       const prevEls = arr.slice(0, index);
       const x = prevEls.reduce((acc, {view}) => acc + view.width + margin, view.width / 2);
       const y = view.height / 2;
@@ -232,7 +204,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     shapeGroups.forEach(({view}) => view.position.y = spawnGroupView.height / 2);
 
     spawnGroupView.pivot.set(spawnGroupView.width / 2, 0);
-    spawnGroupView.position.set(GAME_SIZE.width / 2, gridAreaHeight + distanceBetweenArea);
+    spawnGroupView.position.set(GAME_SIZE.width / 2, gridArea.view.height + distanceBetweenArea);
 
     this.stage.addChild(spawnGroupView);
 

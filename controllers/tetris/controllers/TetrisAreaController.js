@@ -3,12 +3,6 @@ import {GAME_SIZE} from "../TetrisController";
 import TetrisFactory from "../helpers/TetrisFactory";
 import {shuffle} from "../../../utils/scene/utils/random/shuffle";
 
-const utils = {
-  getCellPos: (cellSize, axes) => {
-    return (axes * cellSize) + (cellSize / 2);
-  }
-};
-
 export default class TetrisAreaController extends BaseTetrisController {
   constructor(data) {
     super(data);
@@ -101,7 +95,7 @@ export default class TetrisAreaController extends BaseTetrisController {
 
     const {grid} = levels[this.level.value];
 
-    const gridArea = TetrisFactory.getItemById("gridArea", "gridArea")
+    const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
 
     grid.forEach(({cells}, row) => cells.forEach((cell, column) => {
       const cellData = {
@@ -110,7 +104,7 @@ export default class TetrisAreaController extends BaseTetrisController {
 
       const cellItem = TetrisFactory.createItem("cell", cellData);
 
-      const [x, y] = [column, row].map(axes => utils.getCellPos(cellItem.size, axes));
+      const [x, y] = [column, row].map(axes => (axes * cellItem.size) + (cellItem.size / 2));
 
       cellItem.view.position.set(x, y);
       cellItem.view.alpha = 0;
