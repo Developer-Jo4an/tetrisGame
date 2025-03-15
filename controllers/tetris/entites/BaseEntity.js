@@ -6,10 +6,20 @@ export default class BaseEntity {
 
   _id;
 
+  _type;
+
   constructor(data, type) {
-    this.initStartData(data);
+    this.initBaseProperties(data);
 
     this.type = type;
+  }
+
+  get type() {
+    return this._type;
+  }
+
+  set type(value) {
+    this._type = value;
   }
 
   get id() {
@@ -28,7 +38,7 @@ export default class BaseEntity {
     this._view = value;
   }
 
-  initStartData({id, level, storage, stage, eventBus, name}) {
+  initBaseProperties({id, level, storage, stage, eventBus, name}) {
     this.id = id;
     this.name = name;
     this.stage = stage;
@@ -51,7 +61,7 @@ export default class BaseEntity {
   }
 
   reset(data) {
-    this.initStartData(data);
+    this.initBaseProperties(data);
   }
 
   destroy() {

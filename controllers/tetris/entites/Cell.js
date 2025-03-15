@@ -20,8 +20,8 @@ export default class Cell extends BaseEntity {
 
   _size;
 
-  constructor(data) {
-    super(data, "cell");
+  constructor(data, type) {
+    super(data, type);
 
     this.initProperties(data);
     this.init();

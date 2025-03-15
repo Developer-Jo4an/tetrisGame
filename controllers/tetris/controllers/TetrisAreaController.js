@@ -10,7 +10,6 @@ const utils = {
 };
 
 export default class TetrisAreaController extends BaseTetrisController {
-
   constructor(data) {
     super(data);
 
@@ -18,8 +17,11 @@ export default class TetrisAreaController extends BaseTetrisController {
   }
 
   init() {
-    this.gridContainer = new PIXI.Container();
-    this.gridContainer.name = "gridArea";
+    const gridContainerData = {
+      id: "gridArea", level: this.level, storage: this.storage, stage: this.stage, eventBus: this.eventBus
+    };
+
+    TetrisFactory.createItem("gridArea", gridContainerData);
   }
 
   initializationSelect() {
@@ -28,7 +30,9 @@ export default class TetrisAreaController extends BaseTetrisController {
   }
 
   resetSelect() {
-    this.gridContainer.removeChildren();
+    const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
+
+    gridArea.clear();
   }
 
   showingSelect() {
@@ -64,20 +68,22 @@ export default class TetrisAreaController extends BaseTetrisController {
 
     const showingTimeline = gsap.timeline();
 
-    showingTimeline
-    .to(shuffledViews, {
+    const onComplete = res => {
+      showingTimeline.kill();
+      res();
+    };
+
+    showingTimeline.to(shuffledViews, {
       alpha: 1,
       delay: i => i * 0.01,
       duration: 0.2,
       ease: "ease.inOut"
-    })
-    .to(shuffledScales, {
+    }).to(shuffledScales, {
       x: 1, y: 1,
       delay: i => i * 0.01,
       duration: 0.2,
       ease: "ease.inOut"
-    })
-    .to(hideSquares.map(square => square.view), {
+    }).to(hideSquares.map(square => square.view), {
       alpha: 0,
       delay: i => i * 0.01,
       duration: 0.2,
@@ -87,13 +93,15 @@ export default class TetrisAreaController extends BaseTetrisController {
       }
     });
 
-    return new Promise(res => showingTimeline.eventCallback("onComplete", res));
+    return new Promise(res => showingTimeline.eventCallback("onComplete", () => onComplete(res)));
   }
 
   initGrid() {
-    const {storage: {mainSceneSettings: {levels, area}}, level, gridContainer, eventBus, storage, stage} = this;
+    const {storage: {mainSceneSettings: {levels, area}}, level, eventBus, storage, stage} = this;
 
     const {grid} = levels[this.level.value];
+
+    const gridArea = TetrisFactory.getItemById("gridArea", "gridArea")
 
     grid.forEach(({cells}, row) => cells.forEach((cell, column) => {
       const cellData = {
@@ -107,14 +115,16 @@ export default class TetrisAreaController extends BaseTetrisController {
       cellItem.view.position.set(x, y);
       cellItem.view.alpha = 0;
 
-      gridContainer.addChild(cellItem.view);
+      gridArea.addCell(cellItem.view);
     }));
 
-    gridContainer.position.x = (GAME_SIZE.width - gridContainer.width) / 2;
+    const {view: gridView} = gridArea;
+
+    gridView.position.x = (GAME_SIZE.width - gridView.width) / 2;
 
     TetrisFactory.getCollectionByType("cell").forEach(cell => cell.view.scale.set(0));
 
-    this.stage.addChild(gridContainer);
+    this.stage.addChild(gridView);
   }
 
   initSquares() {

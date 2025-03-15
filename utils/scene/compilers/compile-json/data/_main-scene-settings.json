@@ -1,6 +1,6 @@
 {
   "area": {
-    "margin": 0.05
+    "margin": 35
   },
   "spawnArea": {
     "distanceBetweenArea": 50
@@ -21,21 +21,21 @@
       "startHideCellsMultiplier": 0.45,
       "grid": [
         {
-          "cells": [true, true, true, true, true, true, true, true]
+          "cells": [false, false, false, false, false, false, false, false]
         }, {
-          "cells": [true, "empty", true, true, true, true, "empty", true]
+          "cells": [false, true, false, false, false, false, true, false]
         }, {
-          "cells": [true, true, true, true, true, true, true, true]
-        }, {
-          "cells": [true, true, true, "empty", "empty", true, true, true]
-        }, {
-          "cells": [true, true, true, "empty", "empty", true, true, true]
+          "cells": [true, true, true, false, false, true, true, true]
         }, {
           "cells": [true, true, true, true, true, true, true, true]
         }, {
-          "cells": [true, "empty", true, true, true, true, "empty", true]
-        }, {
           "cells": [true, true, true, true, true, true, true, true]
+        }, {
+          "cells": [false, true, true, true, true, true, true, false]
+        }, {
+          "cells": [false, false, true, true, true, true, false, false]
+        }, {
+          "cells": [false, false, false, true, true, false, false, false]
         }
       ]
     }

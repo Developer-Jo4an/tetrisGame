@@ -2,8 +2,8 @@ import BaseEntity from "./BaseEntity";
 import TetrisFactory from "../helpers/TetrisFactory";
 
 export default class SquaresGroupView extends BaseEntity {
-  constructor(data) {
-    super(data, "squaresGroupView");
+  constructor(data, type) {
+    super(data, type);
 
     this.initProperties(data);
     this.init();

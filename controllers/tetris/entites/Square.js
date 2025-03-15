@@ -2,8 +2,8 @@ import BaseEntity from "../../../controllers/tetris/entites/BaseEntity";
 import AssetsManager from "../../../utils/scene/loader/plugins/AssetsManager";
 
 export default class Square extends BaseEntity {
-  constructor(data) {
-    super(data, "square");
+  constructor(data, type) {
+    super(data, type);
 
     this.initProperties(data);
     this.init();

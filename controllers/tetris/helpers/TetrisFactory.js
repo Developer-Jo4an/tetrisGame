@@ -3,14 +3,16 @@ import {GAME_SIZE} from "../TetrisController";
 import Cell from "../entites/Cell";
 import Square from "../entites/Square";
 import SquaresGroupView from "../entites/SquaresGroupView";
+import GridArea from "../entites/GridArea";
+import SpawnArea from "../entites/SpawnArea";
 
-//todo: надо было синглтоном, а не статиком, потом поправить :(
+//todo: сделать синглтоном, потому что громоздко вышло
 export default class TetrisFactory {
   static library = {};
   static reusedLibrary = {};
 
   //create
-  static createItem(type, data, extraProps = {}) {
+  static createItem(type, data = {}, extraProps = {}) {
     //extraProps в случае, если данные могут быть НЕ одинаковыми при периспользовании и требуется динамический расчет
     const createLogic = {
       cell: () => {
@@ -31,7 +33,7 @@ export default class TetrisFactory {
         if (isFindReused)
           return item;
 
-        const newCell = new Cell(cellCreateData);
+        const newCell = new Cell(cellCreateData, type);
         TetrisFactory.setItemByType(type, newCell);
         return newCell;
       },
@@ -51,7 +53,7 @@ export default class TetrisFactory {
         if (isFindReused)
           return item;
 
-        const newSquare = new Square(squareCreateData);
+        const newSquare = new Square(squareCreateData, type);
         TetrisFactory.setItemByType(type, newSquare);
         return newSquare;
       },
@@ -69,9 +71,41 @@ export default class TetrisFactory {
         if (isFindReused)
           return item;
 
-        const newSquaresGroupView = new SquaresGroupView(squaresGroupViewCreateData);
+        const newSquaresGroupView = new SquaresGroupView(squaresGroupViewCreateData, type);
         TetrisFactory.setItemByType(type, newSquaresGroupView);
         return newSquaresGroupView;
+      },
+      gridArea: () => {
+        const {id, level, stage, storage, eventBus} = data;
+
+        const gridAreaData = {
+          id, name: id, level, stage, storage, eventBus
+        };
+
+        const {isFindReused, item} = TetrisFactory.returnReusedItem(type, gridAreaData);
+
+        if (isFindReused)
+          return item;
+
+        const gridArea = new GridArea(gridAreaData, type);
+        TetrisFactory.setItemByType(type, gridArea);
+        return gridArea;
+      },
+      spawnArea: () => {
+        const {id, level, stage, storage, eventBus} = data;
+
+        const spawnAreaData = {
+          id, name: id, level, stage, storage, eventBus
+        };
+
+        const {isFindReused, item} = TetrisFactory.returnReusedItem(type, spawnAreaData);
+
+        if (isFindReused)
+          return item;
+
+        const spawnArea = new SpawnArea(spawnAreaData, type);
+        TetrisFactory.setItemByType(type, spawnArea);
+        return spawnArea;
       }
     };
 
@@ -100,8 +134,15 @@ export default class TetrisFactory {
 
   //getters
   static getItemById(type, id) {
-    if (!TetrisFactory.library[type]) return;
-    return TetrisFactory.library[type].find(({id: itemId}) => itemId === id);
+    if (!TetrisFactory.library[type])
+      throw new Error("This entity type not found");
+
+    const entity = TetrisFactory.library[type].find(({id: itemId}) => itemId === id);
+
+    if (!entity)
+      throw new Error("This entity not found");
+
+    return entity;
   }
 
   static getReusedCollectionByType(type) {
