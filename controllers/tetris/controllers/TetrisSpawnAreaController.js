@@ -187,7 +187,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
   }
 
   exposeSquaresGroupView() {
-    const {spawnArea: {distanceBetweenArea}, area: {marginSide, marginTop, marginBottom}} = this.storage.mainSceneSettings;
+    const {
+      spawnArea: {distanceBetweenArea},
+      area: {marginSide, marginTop, marginBottom}
+    } = this.storage.mainSceneSettings;
 
     const gridArea = TetrisFactory.getItemById("gridArea", "gridArea");
     const spawnGroupArea = TetrisFactory.getItemById("spawnArea", "spawnArea");
@@ -211,8 +214,8 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       const x = prevEls.reduce((acc, {view}) => acc + view.width + marginSide, view.width / 2);
       const y = view.height / 2;
       view.position.set(x, y);
-      spawnGroupArea.addShape(view);
       view.alpha = 0;
+      spawnGroupArea.addShape(view);
     });
 
     const {view: spawnGroupView} = spawnGroupArea;

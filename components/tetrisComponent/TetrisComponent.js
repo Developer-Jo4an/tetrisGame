@@ -6,6 +6,7 @@ import Loader from "../loader/Loader";
 import {Stats} from "../stats/Stats";
 import {useTetrisReducers} from "../../hooks/tetris/useTetrisReducers";
 import {useReactionsOnEventBusActions} from "../../hooks/tetris/useReactionsOnEventBusActions";
+import {Boosters} from "../boosters/Boosters";
 
 const stateMachine = {
   loadManifest: {availableStates: ["loading"], nextState: "loading", isDefault: true, isLoading: true},
@@ -58,7 +59,7 @@ const TetrisComponents = () => {
     }
   });
 
-  useReactionsOnEventBusActions({wrapper, state, nextStateCallback, setStateCallback})
+  useReactionsOnEventBusActions({wrapper, state, nextStateCallback, setStateCallback});
 
   const isLoading = useMemo(() => stateMachine[state].isLoading, [state]);
 
@@ -66,6 +67,7 @@ const TetrisComponents = () => {
     <div className={"tetris"}>
       <Loader isVisible={isLoading}/>
       <div className={"tetris__container"} ref={containerRef}/>
+      <Boosters eventBus={wrapper?.eventBus}/>
       <Stats eventBus={wrapper?.eventBus}/>
     </div>
   );
