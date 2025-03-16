@@ -32,6 +32,14 @@
       },
       "startHideCellsMultiplier": 0.45,
       "percentSpawnSquares": [0.25, 0.6],
+      "boosters": {
+        "bomb": {
+          "amount": 1
+        },
+        "deleteBricks": {
+          "amount": 1
+        }
+      },
       "grid": [
          {
           "cells": [false, true, false, false, false, false, true, false]

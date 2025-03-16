@@ -14,43 +14,13 @@ export default class TetrisGameController extends BaseTetrisController {
   }
 
   initProperties() {
-    this.timeoutTween = null;
     this.targetPoints = Number.MAX_VALUE;
     this.currentPoints = 0;
   }
 
   init() {
-    this.initTimeout();
     this.initTargetPoints();
     this.toggleEvents("add");
-  }
-
-  initTimeout() {
-    const {gameData: {timeout}} = this.storage.mainSceneSettings.levels[this.level.value];
-
-    if (typeof timeout !== "number") return;
-
-    this.eventBus.dispatchEvent({type: "timeout:update", remainder: timeout});
-
-    let currentTime = timeout;
-
-    this.timeoutTween = gsap.to({}, {
-      duration: timeout,
-      onUpdate: () => {
-        const progress = this.timeoutTween.progress();
-        const remainder = Math.ceil(timeout - progress * timeout);
-        if (currentTime !== remainder) {
-          currentTime = remainder;
-          this.eventBus.dispatchEvent({type: "timeout:update", remainder});
-        }
-      },
-      onComplete: () => {
-        this.timeoutTween.kill();
-        this.lose();
-      }
-    });
-
-    this.timeoutTween.pause();
   }
 
   initTargetPoints() {
@@ -88,15 +58,7 @@ export default class TetrisGameController extends BaseTetrisController {
     this.eventBus.dispatchEvent({type: "game:lost"});
   }
 
-  playingSelect() {
-    if (this.timeoutTween)
-      this.timeoutTween.play();
-  }
-
   resetSelect() {
-    if (this.timeoutTween)
-      this.timeoutTween.kill();
-
     this.toggleEvents("remove");
     this.initProperties();
     this.init();

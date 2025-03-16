@@ -2,7 +2,16 @@ import Button from "../baseComponents/gui/button/Button";
 import {useEffect, useRef, useState} from "react";
 import classNames from "classnames";
 
-export const CustomButton = ({disabled, className, timeout, disposable, onClick, ...props} = {}) => {
+export const CustomButton = (
+  {
+    disabled,
+    className,
+    timeout,
+    disposable,
+    onClick,
+    isPreventDefault = true,
+    ...props
+  } = {}) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const timerRef = useRef();
 
@@ -10,6 +19,11 @@ export const CustomButton = ({disabled, className, timeout, disposable, onClick,
     throw new Error("incompatible properties: disposable and timeout");
 
   const onClickCallback = e => {
+    if (isPreventDefault) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (isDisabled) return;
 
     if (disposable)
