@@ -32,7 +32,7 @@ export const CustomButton = ({disabled, className, timeout, disposable, onClick,
   return (
     <Button
       className={classNames("custom-button", className)}
-      disabled={disabled || isDisabled}
+      disabled={disabled}
       onClick={onClickCallback}
       {...props}
     />

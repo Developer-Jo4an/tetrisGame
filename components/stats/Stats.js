@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 import {CSSTransition} from "react-transition-group";
 
-export const Stats = ({eventBus}) => {
+export const Stats = ({eventBus, state}) => {
   const [stats, setStats] = useState([]);
 
   const formattedStates = useMemo(() => Object.entries(stats ?? {}), [stats]);

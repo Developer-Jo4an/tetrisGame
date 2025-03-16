@@ -1,5 +1,214 @@
 .boosters {
+  width: 100%;
+
   position: absolute;
   bottom: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+
+  user-select: none;
+
+  &__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    &_show {
+      height: 96px;
+      width: 96px;
+
+      align-self: flex-end;
+
+      transition: .3s transform ease-in-out;
+
+      animation: breath infinite 3s alternate ease-in-out;
+
+      @keyframes breath {
+        from {
+          transform: scale(1) rotate(0);
+        }
+        to {
+          transform: scale(1.2) rotate(30deg);
+        }
+      }
+
+      @media (hover: hover) {
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+
+      @media (hover: none) {
+        &:active {
+          transform: scale(1.2);
+        }
+      }
+    }
+
+    &_hide {
+      width: 64px;
+      height: 64px;
+
+      align-self: center;
+    }
+  }
+
+  &__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    transform: translateY(-100%);
+
+    background-color: rgba(#000000, 0.7);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    &-list {
+      width: 320px;
+
+      display: grid;
+      grid-gap: 10px;
+      grid-template-columns: repeat(var(--columns), 1fr);
+      grid-template-rows: repeat(var(--rows), calc((320px - ((var(--columns) - 1) * 10px)) / var(--columns)));
+
+      &-item {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-self: center;
+      }
+    }
+  }
+
+  &__booster {
+    position: relative;
+
+    height: 100%;
+    width: 100%;
+
+    padding: 20px;
+    background-color: #ffffff;
+
+    border-radius: 20px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+
+    &-counter {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-size: 16px;
+      font-weight: bold;
+
+      width: 24px;
+      height: 24px;
+
+      border-radius: 50%;
+      border: 1px solid #000000;
+    }
+
+    &-check {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 24px;
+      height: 24px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    &[disabled] {
+      opacity: 0.3;
+      cursor: default;
+    }
+  }
+
+  &__active-booster {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+
+    opacity: 0.5;
+
+    width: 96px;
+    height: 96px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+
+    &-enter {
+      opacity: 0;
+    }
+
+    &-enter-active {
+      opacity: 1;
+      transition: .3s opacity ease-in-out;
+    }
+
+    &-enter-done {
+      opacity: 1;
+    }
+
+    &-exit {
+      opacity: 1;
+    }
+
+    &-exit-active {
+      opacity: 0;
+      transition: .3s opacity ease-in-out;
+    }
+
+    &-exit-done {
+      opacity: 0;
+    }
+  }
 }

@@ -11,13 +11,15 @@
 @import "../components/baseComponents/gui/customHeader/CustomHeader";
 @import "../components/baseComponents/gui/carousel/Carousel";
 
+//base
+@import "../components/customButton/CustomButton";
+
 //components
 @import "../components/tetrisComponent/TetrisComponent";
 @import "../components/loader/Loader";
 @import "../components/stats/Stats";
 @import "../components/boosters/Boosters";
 @import "../components/modals/gameEnd/GameEndModal";
-@import "../components/customButton/CustomButton";
 
 
 

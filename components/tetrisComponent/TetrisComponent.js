@@ -66,9 +66,11 @@ const TetrisComponents = () => {
   return (
     <div className={"tetris"}>
       <Loader isVisible={isLoading}/>
-      <div className={"tetris__container"} ref={containerRef}/>
-      <Boosters eventBus={wrapper?.eventBus}/>
-      <Stats eventBus={wrapper?.eventBus}/>
+      <div className={"tetris__wrapper"}>
+        <div className={"tetris__container"} ref={containerRef}/>
+        <Boosters eventBus={wrapper?.eventBus} state={state}/>
+        <Stats eventBus={wrapper?.eventBus} state={state}/>
+      </div>
     </div>
   );
 };
