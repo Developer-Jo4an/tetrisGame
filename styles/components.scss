@@ -14,12 +14,15 @@
 //base
 @import "../components/customButton/CustomButton";
 
+//modals
+@import "../components/modals/gameEnd/GameEndModal";
+
 //components
 @import "../components/tetrisComponent/TetrisComponent";
 @import "../components/loader/Loader";
 @import "../components/stats/Stats";
 @import "../components/boosters/Boosters";
-@import "../components/modals/gameEnd/GameEndModal";
+@import "../components/menu/Menu";
 
 
 

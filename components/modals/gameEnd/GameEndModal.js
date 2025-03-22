@@ -1,30 +1,14 @@
 import {useModal} from "../../../hooks/useModal";
 import {CustomButton} from "../../customButton/CustomButton";
+import gameEndCopyright from "./copyright";
 
-const copyright = {
-  buttons: [
-    {
-      attr: {text: "Закрыть"},
-      action: "close"
-    }
-  ],
-  dataByStatus: {
-    win: {
-      title: "Вы выиграли!"
-    },
-    lose: {
-      title: "Вы проиграли!"
-    }
-  }
-};
-
-const {buttons, dataByStatus} = copyright;
+const {buttons, dataByStatus} = gameEndCopyright;
 
 export const GameEndModal = ({id, status, actions}) => {
   const {closeModal} = useModal();
 
   const callbacks = {
-    close: () => {
+    close() {
       actions.close();
       closeModal({id});
     }
@@ -37,13 +21,13 @@ export const GameEndModal = ({id, status, actions}) => {
       <div className={"game-end-modal__content"}>
         <div className={"game-end-modal__title"}>{title}</div>
         <div className={"game-end-modal__buttons"}>
-          {buttons.map(({attr: {text}, action}) => {
-            return <CustomButton
+          {buttons.map(({attr, text, action}) =>
+            <CustomButton
+              {...attr}
               key={`game-modal-button:${action}`}
               className={"game-end-modal__button"}
               onClick={callbacks[action]}
-            >{text}</CustomButton>;
-          })}
+            >{text}</CustomButton>)}
         </div>
       </div>
     </div>

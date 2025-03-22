@@ -31,8 +31,11 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     this.toggleEvents("add");
   }
 
-  playingSelect() {
+  createSelect() {
     this.generateSquaresGroupArray();
+  }
+
+  playingSelect() {
   }
 
   resetSelect() {
@@ -80,9 +83,33 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       , [1])]);
   }
 
-  generateSquaresGroupArray() {
+  generateRecurse({row, column, checkOnComplete, reservedShapes, shapeArr, grid}) {
     const {spawnArea: {spawnSettings: {directions}}} = this.storage.mainSceneSettings;
 
+    if (checkOnComplete()) return;
+
+    const allFigures = reservedShapes.flat(Number.MAX_VALUE);
+
+    const cellId = `${row}-${column}`;
+
+    if (!allFigures.includes(cellId)) {
+      shapeArr.push(cellId);
+      if (checkOnComplete()) return;
+    } else return;
+
+    const shuffledDirections = shuffle([...directions]);
+
+    shuffledDirections.forEach(([y, x]) => {
+      if (checkOnComplete()) return;
+      const [modifiedY, modifiedX] = [y + row, x + column];
+      const necessaryCell = grid[modifiedY]?.[modifiedX];
+      const id = `${modifiedY}-${modifiedX}`;
+      if (this.isCellEmpty(necessaryCell) && !reservedShapes.flat(Number.MAX_VALUE).includes(id))
+        this.generateRecurse({row: modifiedY, column: modifiedX, checkOnComplete, reservedShapes, shapeArr, grid});
+    });
+  }
+
+  generateSquaresGroupArray() {
     const cells = TetrisFactory.getCollectionByType("cell");
 
     const squaresCount = this.getSquaresCount();
@@ -127,31 +154,7 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
           shuffledCells.forEach(cell => {
             if (!this.isCellEmpty(cell) || isPossibleShape) return;
 
-            const recurse = ({row, column}) => {
-              if (checkOnComplete()) return;
-
-              const allFigures = reservedShapes.flat(Number.MAX_VALUE);
-
-              const cellId = `${row}-${column}`;
-
-              if (!allFigures.includes(cellId)) {
-                shapeArr.push(cellId);
-                if (checkOnComplete()) return;
-              } else return;
-
-              const shuffledDirections = shuffle([...directions]);
-
-              shuffledDirections.forEach(([y, x]) => {
-                if (checkOnComplete()) return;
-                const [modifiedY, modifiedX] = [y + row, x + column];
-                const necessaryCell = grid[modifiedY]?.[modifiedX];
-                const id = `${modifiedY}-${modifiedX}`;
-                if (this.isCellEmpty(necessaryCell) && !reservedShapes.flat(Number.MAX_VALUE).includes(id))
-                  recurse({row: modifiedY, column: modifiedX});
-              });
-            };
-
-            recurse(cell.getPosById());
+            this.generateRecurse({...cell.getPosById(), checkOnComplete, reservedShapes, shapeArr, grid});
 
             const cellResult = checkOnComplete();
 
@@ -253,6 +256,8 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
     await this.checkOnAddPoints();
 
     const isLose = shapeGroups?.length && this.checkLose();
+
+    this.step++;
 
     if (isLose) {
       const tween = gsap.to({}, {

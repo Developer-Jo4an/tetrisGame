@@ -1,17 +1,9 @@
 import {useEffect, useMemo, useState} from "react";
 import {CSSTransition, SwitchTransition} from "react-transition-group";
 import {CustomButton} from "../customButton/CustomButton";
+import boostersCopyright from "./copyright";
 
-const copyright = {
-  activeBooster: {
-    bomb: {
-      text: "Нажмите на клетку, чтобы сбросить туда бомбу"
-    },
-    deleteBricks: {
-      text: "Нажмите на клетку, чтобы сбросить удалялку кирпичиков"
-    }
-  }
-};
+const {activeBooster: activeBoosterData} = boostersCopyright
 
 export const Boosters = ({eventBus, state}) => {
   const [boosters, setBoosters] = useState();
@@ -67,7 +59,7 @@ export const Boosters = ({eventBus, state}) => {
 
   return (<>
       <div className={"boosters"}>
-        <SwitchTransition mode={"out-in"}>
+        <SwitchTransition>
           <CSSTransition
             key={isShowedBoosters}
             classNames={"boosters__item"}
@@ -144,7 +136,7 @@ export const Boosters = ({eventBus, state}) => {
           <div className={"boosters__active-booster-view"}>
             <img src={`/images/tetris/boosters/${activeBooster}.png`} alt={"active-booster"}/>
           </div>
-          <div className={"boosters__active-booster-description"}>{copyright.activeBooster[activeBooster].text}</div>
+          <div className={"boosters__active-booster-description"}>{activeBoosterData[activeBooster].text}</div>
         </div>
       }
     </>

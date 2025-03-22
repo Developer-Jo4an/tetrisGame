@@ -10,7 +10,6 @@ export default function useStateReducer(reducers = {}, ignoreNextStates = [], ne
 
     console.log(state, controllerPromise);
 
-
     if (typeof reducers[state] === "function")
       reducers[state](controllerPromise);
 

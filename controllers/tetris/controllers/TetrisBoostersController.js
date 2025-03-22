@@ -5,6 +5,9 @@ export default class TetrisBoostersController extends BaseTetrisController {
   constructor(data) {
     super(data);
 
+    this.boosterChange = this.boosterChange.bind(this);
+    this.boosterChange = this.throwBooster.bind(this);
+
     this.initProperties();
     this.init();
     this.toggleEvents("add");
@@ -33,7 +36,7 @@ export default class TetrisBoostersController extends BaseTetrisController {
     eventBus[method]("booster:change", this.boosterChange);
   }
 
-  boosterChange = ({booster}) => {
+  boosterChange({booster}) {
     const action = booster !== "reset" ? "on" : "off";
 
     this.activeBooster = ({on: booster, off: null})[action];
@@ -47,7 +50,7 @@ export default class TetrisBoostersController extends BaseTetrisController {
     events.forEach(event => ["off", action].forEach(action => gridArea.view[action](event, this.throwBooster)));
   };
 
-  throwBooster = () => {
+  throwBooster() {
     this.boosterChange({booster: "reset"});
   };
 }

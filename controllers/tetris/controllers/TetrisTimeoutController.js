@@ -33,7 +33,7 @@ export default class TetrisTimeoutController extends BaseTetrisController {
       },
       onComplete: () => {
         this.timeoutTween.kill();
-        this.lose();
+        this.eventBus.dispatchEvent({type: "game:lose"});
       }
     });
 

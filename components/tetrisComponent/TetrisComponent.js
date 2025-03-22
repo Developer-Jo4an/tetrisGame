@@ -1,32 +1,21 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useLoadController} from "../../utils/scene/react/hooks/useLoadController";
-import {basePixiImports} from "../../utils/scene/utils/import/import-pixi";
 import useStateReducer from "../../utils/scene/react/hooks/useStateReducer";
-import Loader from "../loader/Loader";
 import {Stats} from "../stats/Stats";
 import {useTetrisReducers} from "../../hooks/tetris/useTetrisReducers";
 import {useReactionsOnEventBusActions} from "../../hooks/tetris/useReactionsOnEventBusActions";
 import {Boosters} from "../boosters/Boosters";
-
-const stateMachine = {
-  loadManifest: {availableStates: ["loading"], nextState: "loading", isDefault: true, isLoading: true},
-  loading: {availableStates: ["initializationControllers"], nextState: "initializationControllers", isLoading: true},
-  initializationControllers: {availableStates: ["initialization"], nextState: "initialization", isLoading: true},
-  initialization: {availableStates: ["showing"], nextState: "showing", isLoading: true},
-  showing: {availableStates: ["playing"], nextState: "playing"},
-  playing: {availableStates: ["pause", "win", "lose"]},
-  win: {availableStates: ["reset"], nextState: "reset"},
-  lose: {availableStates: ["reset"], nextState: "reset"},
-  pause: {availableStates: ["playing", "reset"], nextState: ""},
-  reset: {availableStates: ["initialization"], nextState: "initialization"}
-};
-
-const ignoreNextState = ["playing", "win", "lose", "pause"];
+import {Menu} from "../menu/Menu";
+import Loader from "../loader/Loader";
+import {ignoreNextState, stateMachine, TETRIS_TIMELINE_SPACE} from "../../constants/tetris";
+import {tetrisPixiImports} from "../../controllers/tetris/imports/tetrisPixiImport";
 
 const TetrisComponents = () => {
   const [wrapper, setWrapper] = useState();
   const [state, setState] = useState(Object.entries(stateMachine).find(([_, value]) => value.isDefault)[0]);
   const containerRef = useRef();
+
+  const ref = useRef();
 
   const setStateCallback = newState => {
     if (!stateMachine[state].availableStates.includes(newState))
@@ -50,7 +39,7 @@ const TetrisComponents = () => {
   useStateReducer(reducers, ignoreNextState, nextStateCallback, state, wrapper);
 
   useLoadController({
-    getLibsPromise: basePixiImports,
+    getLibsPromise: () => tetrisPixiImports(TETRIS_TIMELINE_SPACE),
     getWrapperPromise: () => import("../../controllers/tetris/TetrisWrapper"),
     beforeInit: ({wrapper}) => setWrapper(wrapper),
     afterInit: ({wrapper}) => {
@@ -68,9 +57,18 @@ const TetrisComponents = () => {
       <Loader isVisible={isLoading}/>
       <div className={"tetris__wrapper"}>
         <div className={"tetris__container"} ref={containerRef}/>
+        <Menu state={state} setState={setState}/>
         <Boosters eventBus={wrapper?.eventBus} state={state}/>
         <Stats eventBus={wrapper?.eventBus} state={state}/>
       </div>
+      <div ref={ref} style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        width: 50,
+        height: 50,
+        backgroundColor: "#000000"
+      }}></div>
     </div>
   );
 };
