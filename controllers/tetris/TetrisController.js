@@ -4,7 +4,7 @@ import TetrisSpawnAreaController from "./controllers/TetrisSpawnAreaController";
 import TetrisGameController from "./controllers/TetrisGameController";
 import TetrisTimeoutController from "./controllers/TetrisTimeoutController";
 import TetrisBoostersController from "./controllers/TetrisBoostersController";
-import {TETRIS_TIMELINE_SPACE} from "../../constants/tetris";
+import {tetrisTimelineSpaceId} from "../../constants/tetris";
 
 export const GAME_SIZE = {width: 720, height: 1280};
 
@@ -66,8 +66,8 @@ export default class TetrisController extends PixiController {
   }
 
   setPause(isPause) {
-    gsap.localTimeline[isPause ? "pause" : "play"](TETRIS_TIMELINE_SPACE);
     this.app.ticker[isPause ? "stop" : "start"]();
+    gsap.localTimeline[isPause ? "pause" : "play"](tetrisTimelineSpaceId);
   }
 
   setLevel(level) {

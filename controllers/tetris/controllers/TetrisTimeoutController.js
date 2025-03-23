@@ -1,4 +1,5 @@
 import BaseTetrisController from "./BaseTetrisController";
+import {tetrisTimelineSpaceId} from "../../../constants/tetris";
 
 export default class TetrisTimeoutController extends BaseTetrisController {
   constructor(data) {
@@ -32,10 +33,10 @@ export default class TetrisTimeoutController extends BaseTetrisController {
         }
       },
       onComplete: () => {
-        this.timeoutTween.kill();
+        this.timeoutTween.delete(tetrisTimelineSpaceId, true);
         this.eventBus.dispatchEvent({type: "game:lose"});
       }
-    });
+    }).save(tetrisTimelineSpaceId);
 
     this.timeoutTween.pause();
   }

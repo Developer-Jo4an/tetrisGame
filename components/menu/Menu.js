@@ -15,7 +15,7 @@ export const Menu = ({state, setState}) => {
   return (
     <div className={"menu"}>
       {buttons.map(({attr, icon, action}) =>
-        <CustomButton {...attr} onClick={buttonsCallbacks[action]}>
+        <CustomButton key={action} {...attr} onClick={buttonsCallbacks[action]}>
           {!!icon && <Icon name={icon[state] ?? "tetris/pause"}/>}
         </CustomButton>
       )}

@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import {useLoadController} from "../../utils/scene/react/hooks/useLoadController";
 import useStateReducer from "../../utils/scene/react/hooks/useStateReducer";
 import {Stats} from "../stats/Stats";
@@ -7,15 +7,13 @@ import {useReactionsOnEventBusActions} from "../../hooks/tetris/useReactionsOnEv
 import {Boosters} from "../boosters/Boosters";
 import {Menu} from "../menu/Menu";
 import Loader from "../loader/Loader";
-import {ignoreNextState, stateMachine, TETRIS_TIMELINE_SPACE} from "../../constants/tetris";
+import {ignoreNextState, stateMachine, tetrisTimelineSpaceId} from "../../constants/tetris";
 import {tetrisPixiImports} from "../../controllers/tetris/imports/tetrisPixiImport";
 
 const TetrisComponents = () => {
   const [wrapper, setWrapper] = useState();
   const [state, setState] = useState(Object.entries(stateMachine).find(([_, value]) => value.isDefault)[0]);
   const containerRef = useRef();
-
-  const ref = useRef();
 
   const setStateCallback = newState => {
     if (!stateMachine[state].availableStates.includes(newState))
@@ -30,17 +28,13 @@ const TetrisComponents = () => {
     setState(nextState);
   };
 
-  const resetGame = () => {
-    setStateCallback("reset");
-  };
-
-  const reducers = useTetrisReducers({resetGame});
+  const reducers = useTetrisReducers({setStateCallback});
 
   useStateReducer(reducers, ignoreNextState, nextStateCallback, state, wrapper);
 
   useLoadController({
-    getLibsPromise: () => tetrisPixiImports(TETRIS_TIMELINE_SPACE),
     getWrapperPromise: () => import("../../controllers/tetris/TetrisWrapper"),
+    getLibsPromise: () => tetrisPixiImports(tetrisTimelineSpaceId),
     beforeInit: ({wrapper}) => setWrapper(wrapper),
     afterInit: ({wrapper}) => {
       wrapper.setLevel("1");
@@ -61,14 +55,6 @@ const TetrisComponents = () => {
         <Boosters eventBus={wrapper?.eventBus} state={state}/>
         <Stats eventBus={wrapper?.eventBus} state={state}/>
       </div>
-      <div ref={ref} style={{
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        width: 50,
-        height: 50,
-        backgroundColor: "#000000"
-      }}></div>
     </div>
   );
 };

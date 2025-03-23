@@ -4,6 +4,7 @@ import {getRandomFromRange} from "../../../utils/data/random/getRandomFromRange"
 import {GAME_SIZE} from "../TetrisController";
 import {shuffle} from "../../../utils/scene/utils/random/shuffle";
 import {globalUtils} from "../utils/globalUtils";
+import {tetrisTimelineSpaceId} from "../../../constants/tetris";
 
 export default class TetrisSpawnAreaController extends BaseTetrisController {
   constructor(data) {
@@ -232,15 +233,16 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
 
     const shapeViews = shapeGroups.map(({view}) => view);
 
-    const tween = gsap.to(shapeViews, {
+    const tween = gsap
+    .to(shapeViews, {
       alpha: 1,
       duration: 0.3,
       ease: "sine.out",
       onComplete: () => {
-        tween.kill();
+        tween.delete(tetrisTimelineSpaceId, true);
         shapeGroups.forEach(shapeGroup => shapeGroup.setInteractive(true));
       }
-    });
+    }).save(tetrisTimelineSpaceId);
   }
 
   setInteractiveShapes(isInteractive) {
@@ -263,10 +265,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       const tween = gsap.to({}, {
         duration: 1,
         onComplete: () => {
-          tween.kill();
+          tween.delete(tetrisTimelineSpaceId, true);
           this.eventBus.dispatchEvent({type: "game:lose"});
         }
-      });
+      }).save(tetrisTimelineSpaceId);
       return;
     }
 
@@ -297,10 +299,10 @@ export default class TetrisSpawnAreaController extends BaseTetrisController {
       delay: i => 0.3 + (i * 0.05),
       duration: 0.3,
       ease: "sine.inOut"
-    });
+    }).save(tetrisTimelineSpaceId);
 
     const onEndHideAnimation = res => {
-      tween.kill();
+      tween.delete(tetrisTimelineSpaceId, true);
       squares.forEach(square => square.destroy());
       this.eventBus.dispatchEvent({type: "currentPoints:add", addCount: squares?.length});
       res();

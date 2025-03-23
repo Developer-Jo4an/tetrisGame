@@ -2,6 +2,7 @@ import BaseTetrisController from "./BaseTetrisController";
 import {GAME_SIZE} from "../TetrisController";
 import TetrisFactory from "../helpers/TetrisFactory";
 import {shuffle} from "../../../utils/scene/utils/random/shuffle";
+import {tetrisTimelineSpaceId} from "../../../constants/tetris";
 
 export default class TetrisAreaController extends BaseTetrisController {
   constructor(data) {
@@ -60,10 +61,10 @@ export default class TetrisAreaController extends BaseTetrisController {
       return arr;
     })();
 
-    const showingTimeline = gsap.timeline();
+    const showingTimeline = gsap.timeline().save(tetrisTimelineSpaceId);
 
     const onComplete = res => {
-      showingTimeline.kill();
+      showingTimeline.delete(tetrisTimelineSpaceId, true);
       res();
     };
 
@@ -117,7 +118,7 @@ export default class TetrisAreaController extends BaseTetrisController {
     gridView.position.set(
       (GAME_SIZE.width - gridView.width) / 2,
       area.marginTop
-    )
+    );
 
     TetrisFactory.getCollectionByType("cell").forEach(cell => cell.view.scale.set(0));
 

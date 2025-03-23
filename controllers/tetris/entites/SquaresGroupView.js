@@ -1,5 +1,6 @@
 import BaseEntity from "./BaseEntity";
 import TetrisFactory from "../helpers/TetrisFactory";
+import {tetrisTimelineSpaceId} from "../../../constants/tetris";
 
 export default class SquaresGroupView extends BaseEntity {
   constructor(data, type) {
@@ -143,16 +144,16 @@ export default class SquaresGroupView extends BaseEntity {
         duration: 0.2,
         ease: "sine.inOut",
         onComplete: function () {
-          this.kill();
+          this.delete(tetrisTimelineSpaceId, true);
           res();
         }
-      }));
+      }).save(tetrisTimelineSpaceId));
 
     Promise.all([scaleTweenPromise, positionTweenPromise]).then(this.clearDraggingData.bind(this));
   }
 
   setActive(isActive) {
-    const timeline = gsap.timeline();
+    const timeline = gsap.timeline().save(tetrisTimelineSpaceId);
 
     timeline.to(this.view.scale, {
       x: isActive ? 1 : this.selectionScale,
@@ -166,7 +167,7 @@ export default class SquaresGroupView extends BaseEntity {
     }, 0);
 
     const onComplete = res => {
-      timeline.kill();
+      timeline.delete(tetrisTimelineSpaceId, true);
       res();
     };
 

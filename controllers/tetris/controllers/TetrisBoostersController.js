@@ -6,7 +6,7 @@ export default class TetrisBoostersController extends BaseTetrisController {
     super(data);
 
     this.boosterChange = this.boosterChange.bind(this);
-    this.boosterChange = this.throwBooster.bind(this);
+    this.throwBooster = this.throwBooster.bind(this);
 
     this.initProperties();
     this.init();

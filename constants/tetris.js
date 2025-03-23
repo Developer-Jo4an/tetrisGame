@@ -14,4 +14,4 @@ export const stateMachine = {
 
 export const ignoreNextState = ["playing", "win", "lose", "pause"];
 
-export const TETRIS_TIMELINE_SPACE = "tetris";
+export const tetrisTimelineSpaceId = "tetris"
