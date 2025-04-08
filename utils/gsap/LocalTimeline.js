@@ -1,5 +1,3 @@
-let instance;
-
 export default class LocalTimeline {
   static statuses = {
     playing: "playing",
@@ -9,8 +7,9 @@ export default class LocalTimeline {
   _spaces = {};
 
   constructor() {
-    if (instance) return instance;
-    instance = this;
+    if (LocalTimeline.instance)
+      return LocalTimeline.instance;
+    LocalTimeline.instance = this;
 
     this.register();
   }
@@ -48,7 +47,7 @@ export default class LocalTimeline {
 
   clear(namespace, toKill) {
     const tweens = this.getTweensByNamespace(namespace);
-    toKill && tweens.forEach(tween => tween.kill());
+    toKill && tweens.forEach(tween => this.killTween(tween));
     this.spaces[namespace].arr = [];
   }
 
@@ -61,7 +60,7 @@ export default class LocalTimeline {
 
   delete(namespace, tween, toKill) {
     const tweens = this.getTweensByNamespace(namespace);
-    toKill && tween.kill();
+    toKill && this.killTween(tween);
     tweens.filter(insideSpaceTween => insideSpaceTween !== tween);
   }
 
@@ -75,6 +74,19 @@ export default class LocalTimeline {
     const tweens = this.getTweensByNamespace(namespace);
     tweens.forEach(tween => tween.play());
     this.setStatus(namespace, LocalTimeline.statuses.playing);
+  }
+
+  killTween(tween) {
+    if (tween.paused()) {
+      console.warn(tween, "Twin that is paused cannot be killed.");
+      tween.play();
+    }
+
+    if (tween.isKilled)
+      console.warn(tween, "Twin that is killed cannot be killed.");
+
+    tween.kill();
+    tween.isKilled = true;
   }
 
   getTweensByNamespace(namespace) {

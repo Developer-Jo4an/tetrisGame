@@ -48,7 +48,7 @@ export default class TetrisTimeoutController extends BaseTetrisController {
 
   resetSelect() {
     if (this.timeoutTween)
-      this.timeoutTween.kill();
+      this.timeoutTween.delete(tetrisTimelineSpaceId, true);
 
     this.initProperties();
     this.init();

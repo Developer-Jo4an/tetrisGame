@@ -1,17 +1,17 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 import {CSSTransition, SwitchTransition} from "react-transition-group";
 import {CustomButton} from "../customButton/CustomButton";
 import boostersCopyright from "./copyright";
 
-const {activeBooster: activeBoosterData} = boostersCopyright
+const {activeBooster: activeBoosterData} = boostersCopyright;
 
 export const Boosters = ({eventBus, state}) => {
   const [boosters, setBoosters] = useState();
   const [isShowedBoosters, setIsShowedBoosters] = useState(false);
 
-  const formattedBoosters = useMemo(() => Object.entries(boosters ?? {}), [boosters]);
+  const formattedBoosters = Object.entries(boosters ?? {});
 
-  const activeBooster = useMemo(() => formattedBoosters.find(([, data]) => data.isActive)?.[0], [formattedBoosters]);
+  const activeBooster = formattedBoosters.find(([, data]) => data.isActive)?.[0];
 
   const enableBooster = boosterName => {
     const boosterData = {booster: boosterName, isActive: null};
@@ -60,12 +60,7 @@ export const Boosters = ({eventBus, state}) => {
   return (<>
       <div className={"boosters"}>
         <SwitchTransition>
-          <CSSTransition
-            key={isShowedBoosters}
-            classNames={"boosters__item"}
-            appear={true}
-            timeout={300}
-          >
+          <CSSTransition key={isShowedBoosters} classNames={"boosters__item"} appear={true} timeout={300}>
             <div className={"boosters__item"}>
               {isShowedBoosters
                 ?

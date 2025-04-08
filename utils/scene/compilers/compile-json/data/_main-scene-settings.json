@@ -27,8 +27,8 @@
   "levels": {
     "1": {
       "gameData": {
-        "targetPoints": 250,
-        "timeout": 200
+        "targetPoints": 50,
+        "timeout": 50
       },
       "startHideCellsMultiplier": 0.45,
       "percentSpawnSquares": [0.25, 0.6],

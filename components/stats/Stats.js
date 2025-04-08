@@ -4,7 +4,7 @@ import {CSSTransition} from "react-transition-group";
 export const Stats = ({eventBus, state}) => {
   const [stats, setStats] = useState([]);
 
-  const formattedStates = useMemo(() => Object.entries(stats ?? {}), [stats]);
+  const formattedStates = Object.entries(stats ?? {});
 
   useEffect(() => {
     if (!eventBus) return;
@@ -32,11 +32,7 @@ export const Stats = ({eventBus, state}) => {
 
   return (
     <CSSTransition
-      in={!!formattedStates.length}
-      timeout={300}
-      appear={true}
-      mountOnEnter={true}
-      unmountOnExit={true}
+      in={!!formattedStates.length} timeout={300} appear={true} mountOnEnter={true} unmountOnExit={true}
       classNames={"stats"}
     >
       <div className={"stats"}>

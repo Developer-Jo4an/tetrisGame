@@ -1,3 +1,5 @@
+import {image} from "./baseUrl";
+
 export const stateMachine = {
   loadManifest: {availableStates: ["loading"], nextState: "loading", isDefault: true, isLoading: true},
   loading: {availableStates: ["initializationControllers"], nextState: "initializationControllers", isLoading: true},
@@ -14,4 +16,10 @@ export const stateMachine = {
 
 export const ignoreNextState = ["playing", "win", "lose", "pause"];
 
-export const tetrisTimelineSpaceId = "tetris"
+export const tetrisTimelineSpaceId = "tetris";
+
+export const statsIcons = {
+  targetPoints: image(),
+  remainingTime: image(),
+  currentCount: image()
+};

@@ -1,4 +1,4 @@
-import {useMemo, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useLoadController} from "../../utils/scene/react/hooks/useLoadController";
 import useStateReducer from "../../utils/scene/react/hooks/useStateReducer";
 import {Stats} from "../stats/Stats";
@@ -7,26 +7,16 @@ import {useReactionsOnEventBusActions} from "../../hooks/tetris/useReactionsOnEv
 import {Boosters} from "../boosters/Boosters";
 import {Menu} from "../menu/Menu";
 import Loader from "../loader/Loader";
-import {ignoreNextState, stateMachine, tetrisTimelineSpaceId} from "../../constants/tetris";
 import {tetrisPixiImports} from "../../controllers/tetris/imports/tetrisPixiImport";
+import {useTetrisStateControls} from "../../hooks/tetris/useTetrisStateControls";
+import {ignoreNextState, stateMachine, tetrisTimelineSpaceId} from "../../constants/tetris";
 
 const TetrisComponents = () => {
   const [wrapper, setWrapper] = useState();
   const [state, setState] = useState(Object.entries(stateMachine).find(([_, value]) => value.isDefault)[0]);
   const containerRef = useRef();
 
-  const setStateCallback = newState => {
-    if (!stateMachine[state].availableStates.includes(newState))
-      throw new Error(`Not available state ${newState}`);
-    setState(newState);
-  };
-
-  const nextStateCallback = () => {
-    const nextState = stateMachine[state].nextState;
-    if (!nextState || !stateMachine[state].availableStates.includes(nextState))
-      throw new Error(`No next state or not available, nextState: ${nextState}`);
-    setState(nextState);
-  };
+  const {setStateCallback, nextStateCallback} = useTetrisStateControls({state, setState});
 
   const reducers = useTetrisReducers({setStateCallback});
 
@@ -44,17 +34,15 @@ const TetrisComponents = () => {
 
   useReactionsOnEventBusActions({wrapper, state, nextStateCallback, setStateCallback});
 
-  const isLoading = useMemo(() => stateMachine[state].isLoading, [state]);
-
   return (
     <div className={"tetris"}>
-      <Loader isVisible={isLoading}/>
       <div className={"tetris__wrapper"}>
         <div className={"tetris__container"} ref={containerRef}/>
         <Menu state={state} setState={setState}/>
         <Boosters eventBus={wrapper?.eventBus} state={state}/>
         <Stats eventBus={wrapper?.eventBus} state={state}/>
       </div>
+      <Loader isVisible={stateMachine[state].isLoading}/>
     </div>
   );
 };
